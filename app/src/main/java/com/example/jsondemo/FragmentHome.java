@@ -50,6 +50,8 @@ public class FragmentHome extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
+
+        //git sample
         home2 home = (home2) getActivity();
         mQueue = Volley.newRequestQueue(home);
         deviceList = new ArrayList<>();
