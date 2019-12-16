@@ -1,5 +1,6 @@
 package com.example.jsondemo;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -90,10 +91,10 @@ public class FragmentHome extends Fragment {
         mAdapter.setOnItemClickListener(new DeviceAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                changeItem(position, "clicked!");
+                Intent i = new Intent(home, DeviceActivity.class);
+                getActivity().startActivity(i);
             }
         });
-
     }
 
     //Devices JSON data download
