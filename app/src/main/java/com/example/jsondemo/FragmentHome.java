@@ -55,12 +55,7 @@ public class FragmentHome extends Fragment {
         deviceList = new ArrayList<>();
         int userId = home.getUserObject().getId();
 
-        /*
-        DownloadTask task = new DownloadTask();
-        task.execute("\"https://nodemcupractice.000webhostapp.com/api/device/user_devices.php?userId="+ userId);
-        */
-
-        buildRecyclerView(view);
+        jsonParse(view);
 
         return view;
     }
@@ -71,16 +66,6 @@ public class FragmentHome extends Fragment {
         //deviceList.get(position).changeText(text);
         mAdapter.notifyItemChanged(position);
     }
-
-    /*
-    //device list creator
-    public void createDeviceList() {
-        deviceList = new ArrayList<>();
-        deviceList.add(new DeviceModel(0, 1, "TV", null, true, R.drawable.ic_tv_black_));
-        deviceList.add(new DeviceModel(2, 1, "Air con", null, true, R.drawable.ic_tv_black_));
-        deviceList.add(new DeviceModel(3, 1, "CONSOLE", null, true, R.drawable.ic_tv_black_));
-    }
-    */
 
     public void addDeviceList(ArrayList deviceList, int id, int userId, String name, int roomId, boolean active, boolean relay) {
         deviceList.add(new DeviceModel(id, userId, name, roomId, active, relay, R.drawable.ic_tv_black_));
@@ -95,6 +80,8 @@ public class FragmentHome extends Fragment {
         mAdapter = new DeviceAdapter(deviceList);
         mLayoutManager = new GridLayoutManager(home, 2);
 
+
+
         //recyclerView builder
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(mAdapter);
@@ -107,12 +94,12 @@ public class FragmentHome extends Fragment {
             }
         });
 
-
     }
-    //---end card view---//
 
-    //---json---//
-    private void jsonParse() {
+    //Devices JSON data download
+    private void jsonParse(View view) {
+
+        final View homeView = view;
 
         home2 home = (home2) getActivity();
 
@@ -150,10 +137,11 @@ public class FragmentHome extends Fragment {
                                     boolean relay = Boolean.valueOf(user.getString("relay"));
 
                                     deviceList.add(new DeviceModel(id, userId, name, roomId, active, relay, R.drawable.ic_tv_black_));
-                                    addDeviceList(deviceList,id, userId, name, roomId, active, relay);
 
                                     Log.i("devices", name + active + relay);
                                 }
+
+                                buildRecyclerView(homeView);
 
                             }
 
@@ -176,102 +164,5 @@ public class FragmentHome extends Fragment {
         mQueue.add(request);
     }
 
-    //---end json---//
 
-    //AsyncTask
-    public class DownloadTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... urls) {
-
-            String result = "";
-            URL url;
-            HttpURLConnection urlConnection = null;
-
-            try {
-                url = new URL(urls[0]);
-
-                urlConnection = (HttpURLConnection) url.openConnection();
-
-                InputStream in = urlConnection.getInputStream();
-
-                InputStreamReader reader = new InputStreamReader(in);
-
-                int data = reader.read();
-
-                while (data != -1) {
-
-                    char current = (char) data;
-
-                    result += current;
-
-                    data = reader.read();
-
-                }
-
-                return result;
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-
-            try {
-
-                JSONObject jsonObject = new JSONObject(result);
-                JSONArray userArray = jsonObject.getJSONArray("devices");
-
-                for (int i = 0; i < userArray.length(); i++) {
-
-                    JSONObject user = userArray.getJSONObject(i);
-
-                    int id = user.getInt("id");
-                    String name = user.getString("name");
-                    int userId = user.getInt("userId");
-                    int roomId = user.getInt("roomId");
-                    boolean active = Boolean.valueOf(user.getString("active"));
-                    boolean relay = Boolean.valueOf(user.getString("relay"));
-
-                    deviceList.add(new DeviceModel(id, userId, name, roomId, active, relay, R.drawable.ic_tv_black_));
-                    addDeviceList(deviceList,id, userId, name, roomId, active, relay);
-
-                    Log.i("devices", name + active + relay);
-                }
-
-                /*
-                JSONObject jsonObject = new JSONObject(result);
-
-                String weatherInfo = jsonObject.getString("weather");
-
-                Log.i("Weather content", weatherInfo);
-
-                JSONArray arr = new JSONArray(weatherInfo);
-
-                for (int i = 0; i < arr.length(); i++) {
-
-                    JSONObject jsonPart = arr.getJSONObject(i);
-
-                    Log.i("main", jsonPart.getString("main"));
-                    Log.i("description", jsonPart.getString("description"));
-
-                }
-                */
-
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-
-
-        }
-    }
 }
