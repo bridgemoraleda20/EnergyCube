@@ -28,9 +28,9 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
     }
 
     public static class DeviceViewHolder extends  RecyclerView.ViewHolder {
+
         public TextView mTextView1;
         public TextView mTextView2;
-
 
         public DeviceViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
 
@@ -82,7 +82,6 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
             deviceViewHolder.itemView.setBackgroundColor(Color.parseColor("#3FBA4B"));
         else
             deviceViewHolder.itemView.setBackgroundColor(Color.parseColor("#414141"));
-
 
     }
 

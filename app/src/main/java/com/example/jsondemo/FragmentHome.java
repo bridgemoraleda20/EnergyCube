@@ -3,6 +3,7 @@ package com.example.jsondemo;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -29,11 +30,11 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-
 
 public class FragmentHome extends Fragment {
 
@@ -68,10 +69,6 @@ public class FragmentHome extends Fragment {
         mAdapter.notifyItemChanged(position);
     }
 
-    public void addDeviceList(ArrayList deviceList, int id, int userId, String name, int roomId, boolean active, boolean relay) {
-        deviceList.add(new DeviceModel(id, userId, name, roomId, active, relay, R.drawable.ic_tv_black_));
-    }
-
     //recycler view builder
     public void buildRecyclerView(View view) {
         final home2 home = (home2) getActivity();
@@ -80,8 +77,6 @@ public class FragmentHome extends Fragment {
         recyclerView.setHasFixedSize(true);
         mAdapter = new DeviceAdapter(deviceList);
         mLayoutManager = new GridLayoutManager(home, 2);
-
-
 
         //recyclerView builder
         recyclerView.setLayoutManager(mLayoutManager);
@@ -92,6 +87,10 @@ public class FragmentHome extends Fragment {
             @Override
             public void onItemClick(int position) {
                 Intent i = new Intent(home, DeviceActivity.class);
+
+                DeviceModel device = deviceList.get(position);
+
+                i.putExtra("device", device);
                 getActivity().startActivity(i);
             }
         });
@@ -136,8 +135,10 @@ public class FragmentHome extends Fragment {
                                     int roomId = user.getInt("roomId");
                                     boolean active = Boolean.valueOf(user.getString("active"));
                                     boolean relay = Boolean.valueOf(user.getString("relay"));
+                                    String start_time = user.getString("start_time");
+                                    String end_time = user.getString("end_time");
 
-                                    deviceList.add(new DeviceModel(id, userId, name, roomId, active, relay, R.drawable.ic_tv_black_));
+                                    deviceList.add(new DeviceModel(id, userId, name, roomId, active, relay, R.drawable.ic_tv_black_, start_time, end_time));
 
                                     Log.i("devices", name + active + relay);
                                 }
