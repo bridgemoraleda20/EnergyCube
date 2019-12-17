@@ -71,7 +71,7 @@
                 android:textStyle="bold" />
 
             <Switch
-                android:id="@+id/switch_device2"
+                android:id="@+id/switch_schedule"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="16dp"
@@ -81,6 +81,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/buttons_layout"
             android:layout_width="match_parent"
             android:layout_height="115dp"
             android:layout_marginTop="10dp"
@@ -89,10 +90,11 @@
             android:paddingRight="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+            >
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/btn_start"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginRight="7dp"
@@ -103,7 +105,7 @@
                 android:textSize="35sp" />
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/btn_end"
                 style="@style/Widget.AppCompat.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -118,13 +120,13 @@
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="10dp"
             android:paddingBottom="10dp"
             android:background="#dedede"
             >
 
             <TableRow
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 >
 
