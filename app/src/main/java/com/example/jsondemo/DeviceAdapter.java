@@ -16,9 +16,7 @@ import java.util.ArrayList;
 import static android.graphics.Color.GRAY;
 
 public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceViewHolder> {
-    private ArrayList<DeviceModel> mDeviceList;
-
-
+    private static ArrayList<DeviceModel> mDeviceList;
     private OnItemClickListener mListener;
 
     public interface OnItemClickListener {
@@ -40,21 +38,13 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
             mTextView1 = itemView.findViewById(R.id.deviceName);
             mTextView2 = itemView.findViewById(R.id.deviceCurrent);
 
+            //itemView.setBackgroundColor(Color.parseColor("#414141"));
+            //itemView.setBackgroundColor(Color.parseColor("#414141"));
+
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    boolean color = true;
-
-                    if(color) {
-                        v.setBackgroundColor(Color.parseColor("#414141"));
-                        color = false;
-                    }
-
-                    else {
-                        v.setBackgroundColor(Color.parseColor("#3FBA4B"));
-                        color = true;
-                    }
 
                     if (listener != null) {
                         int position = getAdapterPosition();
@@ -87,6 +77,12 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
 
         deviceViewHolder.mTextView1.setText(currentDevice.getName());
         deviceViewHolder.mTextView2.setText("0 kw/h");
+
+        if(currentDevice.isActive())
+            deviceViewHolder.itemView.setBackgroundColor(Color.parseColor("#3FBA4B"));
+        else
+            deviceViewHolder.itemView.setBackgroundColor(Color.parseColor("#414141"));
+
 
     }
 

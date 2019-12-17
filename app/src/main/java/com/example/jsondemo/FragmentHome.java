@@ -165,5 +165,4 @@ public class FragmentHome extends Fragment {
         mQueue.add(request);
     }
 
-
 }

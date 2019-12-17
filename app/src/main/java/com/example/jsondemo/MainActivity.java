@@ -95,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     public void signUpClick(View view) {
         Intent i = new Intent(this, signup.class);
         MainActivity.this.startActivity(i);
@@ -113,8 +112,6 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     JSONObject jsonResponse = new JSONObject(response);
                     boolean success = jsonResponse.getBoolean("success");
-
-
 
                     //fetch user data from mysql
                     if(success) {
