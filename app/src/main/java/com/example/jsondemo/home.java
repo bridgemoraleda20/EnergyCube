@@ -54,11 +54,6 @@ public class home extends AppCompatActivity {
         df2 = new DecimalFormat("#.##");
         home = this;
 
-
-        //------set toggle------//
-
-
-        //----------------------//
         mQueue = Volley.newRequestQueue(this);
 
         parseCurrent();
