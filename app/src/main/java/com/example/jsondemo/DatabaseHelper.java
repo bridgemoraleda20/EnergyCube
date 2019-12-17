@@ -23,7 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table " + TABLE_NAME + " (id INTEGER PRIMARY KEY AUTOINCREMENT, device INTEGER, current DOUBLE, datetime STRING)");
+        db.execSQL("create table " + TABLE_NAME + " (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, device INTEGER, current DOUBLE, datetime STRING)");
     }
 
     @Override
@@ -33,33 +33,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertCurrent(int device, double current, String datetime) {
+    public boolean insertCurrent(int id, int device, double current, String datetime) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValue = new ContentValues();
+        contentValue.put(COL_1, id);
         contentValue.put(COL_2, device);
         contentValue.put(COL_3, current);
         contentValue.put(COL_4, datetime);
-
-        long result = db.insert(TABLE_NAME, null, contentValue);
-
-        if(result == -1)
-            return false;
-        else
-            return true;
-    }
-
-
-    //----USER TABLE----//
-
-    //insert
-    public boolean insertUser(int id, String username, String password , String name, boolean admin) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValue = new ContentValues();
-        contentValue.put("id", id);
-        contentValue.put("username", username);
-        contentValue.put("password", password);
-        contentValue.put("name", name);
-        contentValue.put("admin", admin);
 
         long result = db.insert(TABLE_NAME, null, contentValue);
 

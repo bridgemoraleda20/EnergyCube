@@ -55,7 +55,6 @@ public class FragmentHome extends Fragment {
         return view;
     }
 
-    //---card view---//
     //change item
     public void changeItem(int position, String text) {
         //deviceList.get(position).changeText(text);

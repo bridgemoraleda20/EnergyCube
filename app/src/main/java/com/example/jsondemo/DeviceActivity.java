@@ -48,8 +48,6 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
             }
         });
 
-
-
         btn_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,8 +73,6 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
 
         device_name.setText(device.getName());
 
-
-
     }
 
     @Override
@@ -90,19 +86,27 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
         else
             str_minute = minute + "";
 
-        if(hourOfDay > 12) {
+        if(hourOfDay > 11 && hourOfDay != 12) {
             hourOfDay = hourOfDay - 12;
-            am_pm= "PM";
+            am_pm= "pm";
+        }
+        else if (hourOfDay == 0) {
+            hourOfDay = 12;
+            am_pm = "am";
+        }
+        else if (hourOfDay == 12) {
+            hourOfDay = 12;
+            am_pm = "pm";
         }
         else {
-            am_pm= "AM";
+            am_pm= "am";
         }
         str_hour = hourOfDay +"";
 
         if(buttonIndex == 1)
-            btn_start.setText(str_hour+ ":" + str_minute+am_pm);
+            btn_start.setText("ON\n"+ str_hour+ ":" + str_minute+am_pm);
         else
-            btn_end.setText(str_hour+ ":" + str_minute+am_pm);
+            btn_end.setText("OFF\n" + str_hour+ ":" + str_minute+am_pm);
 
     }
 }

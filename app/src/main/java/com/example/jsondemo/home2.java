@@ -8,12 +8,28 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class home2 extends AppCompatActivity {
 
-    DatabaseHelper myDB;
-    UserModel user;
+    private DatabaseHelper myDB;
+    private UserModel user;
+
+    private RequestQueue mQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +37,8 @@ public class home2 extends AppCompatActivity {
         setContentView(R.layout.activity_home2);
         myDB = new DatabaseHelper(this);
 
+        mQueue = Volley.newRequestQueue(this);
+        //storeCurrentData();
 
         //bottom navigation manager
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
@@ -36,6 +54,8 @@ public class home2 extends AppCompatActivity {
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt("userId", user.getId());
         editor.commit();
+
+
     }
 
     //bottom navigation setter
@@ -68,5 +88,67 @@ public class home2 extends AppCompatActivity {
     //get user
     public UserModel getUserObject() {
         return user;
+    }
+
+    //store current from json to mysql
+    private void storeCurrentData() {
+
+        String url = "https://nodemcupractice.000webhostapp.com/api/current/read_all.php";
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+                            //JSONArray success = response.getJSONArray("user");
+                            int querySuccess = response.getInt("success");
+
+
+                            Log.i("JSON PARSE", Integer.toString(querySuccess));
+
+                            if(querySuccess == 1) {
+
+                                JSONArray userArray = response.getJSONArray("current");
+
+                                for (int i = 0; i < userArray.length(); i++) {
+                                    JSONObject current = userArray.getJSONObject(i);
+
+                                    if (
+                                        myDB.insertCurrent(
+                                                current.getInt("id"),
+                                                current.getInt("device"),
+                                                current.getDouble("current"),
+                                                current.getString("datetime")
+                                        )
+                                    ) {
+                                        Toast.makeText(home2.this, "current data loaded!", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else {
+                                        Toast.makeText(home2.this, "databasee save fail", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                }
+
+
+                            }
+
+                            else {
+                                Toast.makeText(home2.this, "server fail", Toast.LENGTH_SHORT).show();
+                            }
+
+                        } catch (JSONException e) {
+                            Log.i("JSON ERROR", e.toString());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.i("VOLLEY ERROR", error.toString());
+            }
+
+        });
+
+        mQueue.add(request);
     }
 }

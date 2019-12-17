@@ -100,9 +100,12 @@
                 android:layout_marginRight="7dp"
                 android:layout_weight="1"
                 android:background="@color/colorPrimary"
+                android:fontFamily="sans-serif-light"
                 android:text="ON"
+                android:paddingLeft="10sp"
+                android:textAlignment="viewStart"
                 android:textColor="@color/colorAccent"
-                android:textSize="35sp" />
+                android:textSize="30sp" />
 
             <Button
                 android:id="@+id/btn_end"
@@ -110,11 +113,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="7dp"
+                android:paddingLeft="10sp"
+                android:textAlignment="viewStart"
                 android:layout_weight="1"
                 android:background="@color/flat_gray"
+                android:fontFamily="sans-serif-light"
                 android:text="OFF"
                 android:textColor="@color/white"
-                android:textSize="35sp" />
+                android:textSize="30sp" />
         </LinearLayout>
 
         <TableLayout
