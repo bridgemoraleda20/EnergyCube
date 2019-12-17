@@ -6,4 +6,11 @@
 
     <color name="white">#FFFFFF</color>
     <color name="black">#2B2D2F</color>
+    <color name="flat_gray">#5A5E60</color>
+
+
+    <!--- switch colors -->
+    <color name="disable_foreground">#42221F1F</color>
+    <color name="disable_thumb_grey">#1c000000</color>
+    <color name="enable_thumb_grey">#46BDBF</color>
 </resources>
