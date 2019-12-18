@@ -101,7 +101,7 @@ public class home2 extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
 
                         try {
-                            //JSONArray success = response.getJSONArray("user");
+                            //JSONArray success = response.getJSONArray("user");ß
                             int querySuccess = response.getInt("success");
 
 
@@ -122,14 +122,13 @@ public class home2 extends AppCompatActivity {
                                                 current.getString("datetime")
                                         )
                                     ) {
-                                        Toast.makeText(home2.this, "current data loaded!", Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(home2.this, "current data loaded!", Toast.LENGTH_SHORT).show();
                                     }
                                     else {
-                                        Toast.makeText(home2.this, "databasee save fail", Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(home2.this, "databasee save fail", Toast.LENGTH_SHORT).show();
                                     }
 
                                 }
-
 
                             }
 

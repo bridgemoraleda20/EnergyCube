@@ -5,6 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import java.time.LocalDateTime;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -41,12 +44,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValue.put(COL_3, current);
         contentValue.put(COL_4, datetime);
 
-        long result = db.insert(TABLE_NAME, null, contentValue);
-
-        if(result == -1)
-            return false;
-        else
+        try {
+            long result = db.insertOrThrow(TABLE_NAME, null, contentValue);
             return true;
+        } catch (Exception e) {
+            Log.i("insert error", e.toString());
+            return false;
+        }
+
     }
 
 }
