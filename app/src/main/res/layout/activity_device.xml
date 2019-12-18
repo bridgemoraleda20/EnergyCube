@@ -50,7 +50,8 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-        tools:layout_editor_absoluteX="173dp">
+        app:layout_constraintVertical_bias="1.0"
+        tools:layout_editor_absoluteX="139dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -63,9 +64,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Schedule"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
+                android:text="Schedule"
                 android:textColor="@color/flat_gray"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -90,8 +91,7 @@
             android:paddingRight="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-            >
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
 
             <Button
                 android:id="@+id/btn_start"
@@ -101,8 +101,8 @@
                 android:layout_weight="1"
                 android:background="@color/colorPrimary"
                 android:fontFamily="sans-serif-light"
-                android:text="ON"
                 android:paddingLeft="10sp"
+                android:text="ON"
                 android:textAlignment="viewStart"
                 android:textColor="@color/colorAccent"
                 android:textSize="30sp" />
@@ -113,12 +113,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="7dp"
-                android:paddingLeft="10sp"
-                android:textAlignment="viewStart"
                 android:layout_weight="1"
                 android:background="@color/flat_gray"
                 android:fontFamily="sans-serif-light"
+                android:paddingLeft="10sp"
                 android:text="OFF"
+                android:textAlignment="viewStart"
                 android:textColor="@color/white"
                 android:textSize="30sp" />
         </LinearLayout>
@@ -127,14 +127,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:paddingBottom="10dp"
             android:background="#f5f5f5"
-            >
+            android:paddingBottom="10dp">
 
             <TableRow
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                >
+                android:layout_height="match_parent">
 
                 <!-- STATS and BILLING ROW -->
 
@@ -147,30 +145,31 @@
                     android:text="Stats"
                     android:textSize="30sp"
                     android:textStyle="bold" />
+
                 <TextView
                     android:id="@+id/textView9"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:text="Billing"
                     android:textSize="30sp"
-                    android:textStyle="bold"
-                    android:text="Billing" />
+                    android:textStyle="bold" />
             </TableRow>
 
             <!-- DAILY ROW -->
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" >
+                android:layout_height="match_parent">
 
                 <TextView
                     android:id="@+id/stats_hour"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
+                    android:layout_weight="1"
                     android:text="0.00"
                     android:textColor="@color/colorPrimary"
-                    android:layout_weight="1"
                     android:textSize="40sp"
                     android:textStyle="bold" />
 
@@ -187,7 +186,7 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" >
+                android:layout_height="match_parent">
 
                 <TextView
                     android:id="@+id/textView10"
@@ -213,7 +212,7 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" >
+                android:layout_height="match_parent">
 
                 <TextView
                     android:id="@+id/stats_day"
@@ -239,7 +238,7 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" >
+                android:layout_height="match_parent">
 
                 <TextView
                     android:id="@+id/textView12"
@@ -265,16 +264,16 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" >
+                android:layout_height="match_parent">
 
                 <TextView
                     android:id="@+id/stats_month"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
+                    android:layout_weight="1"
                     android:text="0.00"
                     android:textColor="@color/colorPrimary"
-                    android:layout_weight="1"
                     android:textSize="40sp"
                     android:textStyle="bold" />
 
@@ -291,7 +290,7 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" >
+                android:layout_height="match_parent">
 
                 <TextView
                     android:id="@+id/textView14"
@@ -315,6 +314,18 @@
 
 
         </TableLayout>
+
+        <!--
+        <ImageView
+            android:id="@+id/imageButton_back"
+            android:layout_width="128dp"
+            android:layout_height="107dp"
+            app:srcCompat="@drawable/green_back_icon"
+            android:layout_marginTop="30dp"
+            android:layout_gravity="center_horizontal"
+            />
+
+            -->
 
     </LinearLayout>
 

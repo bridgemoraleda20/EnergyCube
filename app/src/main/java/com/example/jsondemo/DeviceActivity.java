@@ -1,15 +1,21 @@
 package com.example.jsondemo;
 
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.CountDownTimer;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -34,6 +40,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
+import static java.security.AccessController.getContext;
+
 public class DeviceActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
 
     DeviceModel device;
@@ -52,6 +60,8 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
     Button btn_end;
     Switch switch_schedule;
     Switch switch_device;
+    //ImageView backButton;
+
     LinearLayout schedule_layout;
 
     //json
@@ -76,6 +86,7 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
         btn_end = findViewById(R.id.btn_end);
         switch_schedule = findViewById(R.id.switch_schedule);
         switch_device    = findViewById(R.id.switch_device);
+        //backButton = findViewById(R.id.imageButton_back);
 
         schedule_layout = findViewById(R.id.buttons_layout);
 
@@ -92,15 +103,31 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
         Intent intent = getIntent();
         device = intent.getParcelableExtra("device");
 
+        //SWITCHES setters
+        if(device.isRelay())
+            switch_device.setChecked(true);
+        else
+            switch_device.setChecked(false);
+
+        if(device.isActive()) {
+            switch_schedule.setChecked(true);
+            schedule_layout.setVisibility(View.VISIBLE);
+        }
+        else {
+            switch_schedule.setChecked(false);
+            schedule_layout.setVisibility(View.GONE);
+        }
+
+        //DEVICE NAME Title setter
         device_name.setText(device.getName());
 
         //calendar
         format1 = DateTimeFormatter.ofPattern("yyyy-M-d H:mm:ss");
         currentDateTime = LocalDateTime.now();
 
-        df2 = new DecimalFormat("#.####");
+        df2 = new DecimalFormat("#.###");
 
-/*
+        /*
         new CountDownTimer(10000000,10000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -115,28 +142,86 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
         }.start();
         */
 
-
-
         //Toast.makeText(DeviceActivity.this, "minute: " + hour, Toast.LENGTH_SHORT).show();
 
         jsonParse();
 
+        //ON CLICK LISTENERS
+        /*
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                backButton.setImageResource(R.drawable.back_icon);
+                Intent intent = new Intent(DeviceActivity.this, home2.class);
+                startActivity(intent);
+            }
+        });
+        */
+
+        //edit device name
+        device_name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(DeviceActivity.this);
+                builder.setTitle("Edit Device Name");
+                ViewGroup group = (ViewGroup) findViewById(android.R.id.content);
+                View viewInflated = LayoutInflater.from(DeviceActivity.this).inflate(R.layout.dialog_edit_device_name, group, false);
+
+                // Set up the input
+                final EditText input = (EditText) viewInflated.findViewById(R.id.editDeviceName);
+
+                // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                builder.setView(viewInflated);
+
+                //update new name to database
+                builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        device_name.setText(input.getText().toString());
+
+                        //json exec
+                        String url = "https://nodemcupractice.000webhostapp.com/api/device/update_name.php?id="+device.getId()+"&name=" + input.getText().toString();
+                        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                                new Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+
+                                    }
+                                }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.i("VOLLEY ERROR", error.toString());
+                            }
+
+                        });
+
+                        mQueue.add(request);
+
+                    }
+                });
+                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+            }
+
+        });
+
         switch_schedule.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
-                    schedule_layout.setVisibility(View.VISIBLE);
-                } else {
-                    schedule_layout.setVisibility(View.GONE);
-                }
-            }
-        });
 
-        switch_device.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    String url = "https://nodemcupractice.000webhostapp.com/api/led/update.php?id=1&status=on";
+
+
+                if(isChecked) {
+
+                    String url = "https://nodemcupractice.000webhostapp.com/api/device/toggle_active.php?id="+device.getId()+"&active=true";
                     JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                             new Response.Listener<JSONObject>() {
                                 @Override
@@ -152,8 +237,38 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
                     });
 
                     mQueue.add(request);
+
+                    device.setActive(true);
+                    schedule_layout.setVisibility(View.VISIBLE);
                 } else {
-                    String url = "https://nodemcupractice.000webhostapp.com/api/led/update.php?id=1&status=off";
+                    String url = "https://nodemcupractice.000webhostapp.com/api/device/toggle_active.php?id="+device.getId()+"&active=false";
+                    JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                            new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+
+                                }
+                            }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.i("VOLLEY ERROR", error.toString());
+                        }
+
+                    });
+                    mQueue.add(request);
+
+                    device.setActive(false);
+                    schedule_layout.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        switch_device.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (isChecked) {
+                    String url = "https://nodemcupractice.000webhostapp.com/api/device/toggle_relay.php?id="+device.getId()+"&relay=true";
                     JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                             new Response.Listener<JSONObject>() {
                                 @Override
@@ -168,6 +283,25 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
 
                     });
 
+                    device.setRelay(true);
+                    mQueue.add(request);
+                } else {
+                    String url = "https://nodemcupractice.000webhostapp.com/api/device/toggle_relay.php?id="+device.getId()+"&relay=false";
+                    JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                            new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+
+                                }
+                            }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.i("VOLLEY ERROR", error.toString());
+                        }
+
+                    });
+
+                    device.setRelay(false);
                     mQueue.add(request);
                 }
             }
@@ -181,8 +315,6 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
                 timePicker.show(getSupportFragmentManager(), "SCHEDULE ON");
             }
         });
-
-
 
         btn_end.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -275,7 +407,6 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
                                         }
                                     }
 
-
                                 }
 
                                 hourly /= 1000;
@@ -310,7 +441,6 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
         });
 
         mQueue.add(request);
-
     }
 
 

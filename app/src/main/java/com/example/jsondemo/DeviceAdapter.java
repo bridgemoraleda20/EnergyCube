@@ -78,7 +78,7 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
         deviceViewHolder.mTextView1.setText(currentDevice.getName());
         deviceViewHolder.mTextView2.setText("0 kw/h");
 
-        if(currentDevice.isActive())
+        if(currentDevice.isRelay())
             deviceViewHolder.itemView.setBackgroundColor(Color.parseColor("#3FBA4B"));
         else
             deviceViewHolder.itemView.setBackgroundColor(Color.parseColor("#414141"));
