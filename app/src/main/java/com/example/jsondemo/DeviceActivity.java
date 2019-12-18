@@ -187,7 +187,11 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
                                 new Response.Listener<JSONObject>() {
                                     @Override
                                     public void onResponse(JSONObject response) {
-
+                                        try {
+                                            Log.i("editname", response.getString("message"));
+                                        } catch (JSONException e) {
+                                            Log.i("editname", e.toString());
+                                        }
                                     }
                                 }, new Response.ErrorListener() {
                             @Override
@@ -213,6 +217,7 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
 
         });
 
+        //switch change listener
         switch_schedule.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -393,7 +398,6 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
                                     JSONObject current = userArray.getJSONObject(i);
 
                                     LocalDateTime deviceDateTime = LocalDateTime.from(format1.parse(current.getString("datetime")));
-
 
                                     if(currentDateTime.getYear() == deviceDateTime.getYear()) {
                                         if(currentDateTime.getMonth() == deviceDateTime.getMonth()) {
