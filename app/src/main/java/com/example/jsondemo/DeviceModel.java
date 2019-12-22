@@ -24,6 +24,8 @@ public class DeviceModel implements Parcelable {
         this.isActive = isActive;
         this.relay = relay;
         this.imageResource = imageResource;
+        this.start_time = start_time;
+        this.end_time = end_time;
 
     }
 

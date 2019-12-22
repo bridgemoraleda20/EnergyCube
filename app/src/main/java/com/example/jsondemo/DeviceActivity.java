@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -35,12 +34,8 @@ import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
 
-import static java.security.AccessController.getContext;
 
 public class DeviceActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
 
@@ -84,6 +79,8 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
 
         btn_start = findViewById(R.id.btn_start);
         btn_end = findViewById(R.id.btn_end);
+
+        //schedule buttons
         switch_schedule = findViewById(R.id.switch_schedule);
         switch_device    = findViewById(R.id.switch_device);
         //backButton = findViewById(R.id.imageButton_back);
@@ -103,12 +100,30 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
         Intent intent = getIntent();
         device = intent.getParcelableExtra("device");
 
-        //SWITCHES setters
+        //calendar
+        format1 = DateTimeFormatter.ofPattern("yyyy-M-d H:mm:ss");
+        currentDateTime = LocalDateTime.now();
+
+        df2 = new DecimalFormat("#.###");
+
+        //======== POPULATE U.I. =========//
+
+        /*
+         * inflate DeviceActivity UI elements
+         * from DeviceModel object
+        */
+
+        //DEVICE NAME
+        device_name.setText(device.getName());
+
+        //SWITCHES
+        //relay
         if(device.isRelay())
             switch_device.setChecked(true);
         else
             switch_device.setChecked(false);
 
+        //schedule
         if(device.isActive()) {
             switch_schedule.setChecked(true);
             schedule_layout.setVisibility(View.VISIBLE);
@@ -118,17 +133,12 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
             schedule_layout.setVisibility(View.GONE);
         }
 
-        //DEVICE NAME Title setter
-        device_name.setText(device.getName());
+        //SCHEDULE BUTTONS
+        btn_start.setText("ON\n" + device.getStart_time());      //start button
+        btn_end.setText("OFF\n" + device.getEnd_time());          //end button
 
-        //calendar
-        format1 = DateTimeFormatter.ofPattern("yyyy-M-d H:mm:ss");
-        currentDateTime = LocalDateTime.now();
-
-        df2 = new DecimalFormat("#.###");
-
-        /*
-        new CountDownTimer(10000000,10000) {
+        //STATS and BILLING
+        new CountDownTimer(10000000,10000) {        //updates every 5 secoonds
             @Override
             public void onTick(long millisUntilFinished) {
                 jsonParse();
@@ -140,25 +150,11 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
                 jsonParse();
             }
         }.start();
-        */
 
-        //Toast.makeText(DeviceActivity.this, "minute: " + hour, Toast.LENGTH_SHORT).show();
 
-        jsonParse();
+        //============ LISTENERS ===========//
 
-        //ON CLICK LISTENERS
-        /*
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                backButton.setImageResource(R.drawable.back_icon);
-                Intent intent = new Intent(DeviceActivity.this, home2.class);
-                startActivity(intent);
-            }
-        });
-        */
-
-        //edit device name
+        //DIALOG - edit device name
         device_name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -217,12 +213,10 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
 
         });
 
-        //switch change listener
+        //SCHEDULE - switch change listener
         switch_schedule.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-
 
                 if(isChecked) {
 
@@ -245,7 +239,9 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
 
                     device.setActive(true);
                     schedule_layout.setVisibility(View.VISIBLE);
-                } else {
+                }
+
+                else {
                     String url = "https://nodemcupractice.000webhostapp.com/api/device/toggle_active.php?id="+device.getId()+"&active=false";
                     JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                             new Response.Listener<JSONObject>() {
@@ -268,12 +264,13 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
             }
         });
 
+        //RELAY or DEVICE - switch change listener
         switch_device.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 if (isChecked) {
-                    String url = "https://nodemcupractice.000webhostapp.com/api/device/toggle_relay.php?id="+device.getId()+"&relay=true";
+                    String url = "https://nodemcupractice.000webhostapp.com/api/device/toggle_relay.php?id=" + device.getId() + "&relay=true";
                     JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                             new Response.Listener<JSONObject>() {
                                 @Override
@@ -290,7 +287,9 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
 
                     device.setRelay(true);
                     mQueue.add(request);
-                } else {
+                }
+
+                else {
                     String url = "https://nodemcupractice.000webhostapp.com/api/device/toggle_relay.php?id="+device.getId()+"&relay=false";
                     JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                             new Response.Listener<JSONObject>() {
@@ -312,6 +311,7 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
             }
         });
 
+        //SCHEDULE - buttons change listeners
         btn_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -334,36 +334,102 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+
+        int hourOfDay_12f = hourOfDay;
+        int minute_12f  = minute;
+
         String str_minute;
         String str_hour;
         String am_pm;
 
-        if(minute < 9)
+        String strTime = "00:00:00";
+
+        if(minute < 10)
             str_minute = "0" + minute;
         else
             str_minute = minute + "";
 
         if(hourOfDay > 11 && hourOfDay != 12) {
-            hourOfDay = hourOfDay - 12;
+            hourOfDay_12f = hourOfDay - 12;
             am_pm= "pm";
         }
         else if (hourOfDay == 0) {
-            hourOfDay = 12;
+            hourOfDay_12f = 12;
             am_pm = "am";
         }
         else if (hourOfDay == 12) {
-            hourOfDay = 12;
+            hourOfDay_12f = 12;
             am_pm = "pm";
         }
         else {
             am_pm= "am";
         }
-        str_hour = hourOfDay +"";
+        str_hour = hourOfDay_12f +"";
 
-        if(buttonIndex == 1)
-            btn_start.setText("ON\n"+ str_hour+ ":" + str_minute+am_pm);
-        else
-            btn_end.setText("OFF\n" + str_hour+ ":" + str_minute+am_pm);
+        //ON button
+        if(buttonIndex == 1) {
+            btn_start.setText("ON\n" + str_hour + ":" + str_minute + am_pm);
+
+            //set to hh:mm:ss format
+            if(hourOfDay < 10) {
+                strTime = "0"+ hourOfDay + ":" + minute + ":00";
+            }
+
+            else {
+                strTime = hourOfDay + ":" + minute + ":00";
+            }
+
+            //update database
+            String url = "https://nodemcupractice.000webhostapp.com/api/device/update_start_time.php?id="+device.getId()+"&start_time=" + strTime;
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.i("VOLLEY ERROR", error.toString());
+                }
+            });
+
+            mQueue.add(request);
+
+        }
+
+        //OFF button
+        else {
+            btn_end.setText("OFF\n" + str_hour + ":" + str_minute + am_pm);
+
+            //set to hh:mm:ss format
+            if(hourOfDay < 10) {
+                strTime = "0"+ hourOfDay + ":" + minute + ":00";
+            }
+
+            else {
+                strTime = hourOfDay + ":" + minute + ":00";
+            }
+
+            //update database
+            String url = "https://nodemcupractice.000webhostapp.com/api/device/update_end_time.php?id="+device.getId()+"&end_time=" + strTime;
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.i("VOLLEY ERROR", error.toString());
+                }
+            });
+
+            mQueue.add(request);
+        }
 
     }
 
@@ -423,7 +489,7 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
                                 stats_day.setText(df2.format(daily));
                                 bill_day.setText("P" + df2.format(daily*9.56));
 
-                                stats_month.setText(df2.format(daily));
+                                stats_month.setText(df2.format(monthly));
                                 bill_month.setText("P" + df2.format(monthly*9.56));
                             }
 
@@ -447,5 +513,42 @@ public class DeviceActivity extends AppCompatActivity implements TimePickerDialo
         mQueue.add(request);
     }
 
+    public String twelveFormatConvert(String original) {
 
+        //LocalDateTime dateTime = LocalDateTime.from(format1.parse(original));
+        LocalDateTime dateTime = LocalDateTime.from(format1.parse(original));
+
+        int hourOfDay = dateTime.getHour();
+        int minute = dateTime.getMinute();
+
+        String str_minute;
+        String str_hour;
+        String am_pm;
+
+
+        if(minute < 10)
+            str_minute = "0" + minute;
+        else
+            str_minute = minute + "";
+
+        if(hourOfDay > 11 && hourOfDay != 12) {
+            hourOfDay = hourOfDay - 12;
+            am_pm= "pm";
+        }
+        else if (hourOfDay == 0) {
+            hourOfDay = 12;
+            am_pm = "am";
+        }
+        else if (hourOfDay == 12) {
+            hourOfDay = 12;
+            am_pm = "pm";
+        }
+        else {
+            am_pm= "am";
+        }
+        str_hour = hourOfDay +"";
+
+        return str_hour + ":" + str_minute + am_pm;
+
+    }
 }

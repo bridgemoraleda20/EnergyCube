@@ -104,7 +104,7 @@
                 android:paddingLeft="10sp"
                 android:text="ON"
                 android:textAlignment="viewStart"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/white"
                 android:textSize="30sp" />
 
             <Button
